@@ -3,14 +3,44 @@
 // The only portions you need to work on are the helper functions (below)
 
 (function() {
-
   window.Board = Backbone.Model.extend({
-
-    initialize: function (params) {
+    initialize: function(params) {
       if (_.isUndefined(params) || _.isNull(params)) {
-        console.log('Good guess! But to use the Board() constructor, you must pass it an argument in one of the following formats:');
-        console.log('\t1. An object. To create an empty board of size n:\n\t\t{n: %c<num>%c} - Where %c<num> %cis the dimension of the (empty) board you wish to instantiate\n\t\t%cEXAMPLE: var board = new Board({n:5})', 'color: blue;', 'color: black;', 'color: blue;', 'color: black;', 'color: grey;');
-        console.log('\t2. An array of arrays (a matrix). To create a populated board of size n:\n\t\t[ [%c<val>%c,%c<val>%c,%c<val>%c...], [%c<val>%c,%c<val>%c,%c<val>%c...], [%c<val>%c,%c<val>%c,%c<val>%c...] ] - Where each %c<val>%c is whatever value you want at that location on the board\n\t\t%cEXAMPLE: var board = new Board([[1,0,0],[0,1,0],[0,0,1]])', 'color: blue;', 'color: black;', 'color: blue;', 'color: black;', 'color: blue;', 'color: black;', 'color: blue;', 'color: black;', 'color: blue;', 'color: black;', 'color: blue;', 'color: black;', 'color: blue;', 'color: black;', 'color: blue;', 'color: black;', 'color: blue;', 'color: black;', 'color: blue;', 'color: black;', 'color: grey;');
+        console.log(
+          'Good guess! But to use the Board() constructor, you must pass it an argument in one of the following formats:'
+        );
+        console.log(
+          '\t1. An object. To create an empty board of size n:\n\t\t{n: %c<num>%c} - Where %c<num> %cis the dimension of the (empty) board you wish to instantiate\n\t\t%cEXAMPLE: var board = new Board({n:5})',
+          'color: blue;',
+          'color: black;',
+          'color: blue;',
+          'color: black;',
+          'color: grey;'
+        );
+        console.log(
+          '\t2. An array of arrays (a matrix). To create a populated board of size n:\n\t\t[ [%c<val>%c,%c<val>%c,%c<val>%c...], [%c<val>%c,%c<val>%c,%c<val>%c...], [%c<val>%c,%c<val>%c,%c<val>%c...] ] - Where each %c<val>%c is whatever value you want at that location on the board\n\t\t%cEXAMPLE: var board = new Board([[1,0,0],[0,1,0],[0,0,1]])',
+          'color: blue;',
+          'color: black;',
+          'color: blue;',
+          'color: black;',
+          'color: blue;',
+          'color: black;',
+          'color: blue;',
+          'color: black;',
+          'color: blue;',
+          'color: black;',
+          'color: blue;',
+          'color: black;',
+          'color: blue;',
+          'color: black;',
+          'color: blue;',
+          'color: black;',
+          'color: blue;',
+          'color: black;',
+          'color: blue;',
+          'color: black;',
+          'color: grey;'
+        );
       } else if (params.hasOwnProperty('n')) {
         this.set(makeEmptyMatrix(this.get('n')));
       } else {
@@ -25,7 +55,7 @@
     },
 
     togglePiece: function(rowIndex, colIndex) {
-      this.get(rowIndex)[colIndex] = + !this.get(rowIndex)[colIndex];
+      this.get(rowIndex)[colIndex] = +!this.get(rowIndex)[colIndex];
       this.trigger('change');
     },
 
@@ -45,24 +75,33 @@
       return (
         this.hasRowConflictAt(rowIndex) ||
         this.hasColConflictAt(colIndex) ||
-        this.hasMajorDiagonalConflictAt(this._getFirstRowColumnIndexForMajorDiagonalOn(rowIndex, colIndex)) ||
-        this.hasMinorDiagonalConflictAt(this._getFirstRowColumnIndexForMinorDiagonalOn(rowIndex, colIndex))
+        this.hasMajorDiagonalConflictAt(
+          this._getFirstRowColumnIndexForMajorDiagonalOn(rowIndex, colIndex)
+        ) ||
+        this.hasMinorDiagonalConflictAt(
+          this._getFirstRowColumnIndexForMinorDiagonalOn(rowIndex, colIndex)
+        )
       );
     },
 
     hasAnyQueensConflicts: function() {
-      return this.hasAnyRooksConflicts() || this.hasAnyMajorDiagonalConflicts() || this.hasAnyMinorDiagonalConflicts();
+      return (
+        this.hasAnyRooksConflicts() ||
+        this.hasAnyMajorDiagonalConflicts() ||
+        this.hasAnyMinorDiagonalConflicts()
+      );
     },
 
     _isInBounds: function(rowIndex, colIndex) {
       return (
-        0 <= rowIndex && rowIndex < this.get('n') &&
-        0 <= colIndex && colIndex < this.get('n')
+        0 <= rowIndex &&
+        rowIndex < this.get('n') &&
+        0 <= colIndex &&
+        colIndex < this.get('n')
       );
     },
 
-
-/*
+    /*
          _             _     _
      ___| |_ __ _ _ __| |_  | |__   ___ _ __ ___ _
     / __| __/ _` | '__| __| | '_ \ / _ \ '__/ _ (_)
@@ -79,30 +118,51 @@
     //
     // test if a specific row on this board contains a conflict
     hasRowConflictAt: function(rowIndex) {
+      var board = this.attributes;
+      var numInRow = board[rowIndex].reduce((acc, val) => acc + val);
+      if (numInRow > 1) {
+        return true;
+      }
       return false; // fixme
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
+      var board = this.attributes;
+      for (let index = 0; index < board.n; index++) {
+        if (this.hasRowConflictAt(index)) {
+          return true;
+        }
+      }
       return false; // fixme
     },
-
-
 
     // COLUMNS - run from top to bottom
     // --------------------------------------------------------------
     //
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
+      var board = this.attributes;
+      var numInCol = 0;
+      for (let index = 0; index < board.n; index++) {
+        numInCol += board[index][colIndex];
+      }
+      if (numInCol > 1) {
+        return true;
+      }
       return false; // fixme
     },
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
+      var board = this.attributes;
+      for (let index = 0; index < board.n; index++) {
+        if (this.hasColConflictAt(index)) {
+          return true;
+        }
+      }
       return false; // fixme
     },
-
-
 
     // Major Diagonals - go from top-left to bottom-right
     // --------------------------------------------------------------
@@ -116,8 +176,6 @@
     hasAnyMajorDiagonalConflicts: function() {
       return false; // fixme
     },
-
-
 
     // Minor Diagonals - go from top-right to bottom-left
     // --------------------------------------------------------------
@@ -133,8 +191,6 @@
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/
-
-
   });
 
   var makeEmptyMatrix = function(n) {
@@ -144,5 +200,4 @@
       });
     });
   };
-
-}());
+})();
