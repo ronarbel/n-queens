@@ -48,7 +48,7 @@ window.findNRooksSolution = function(n) {
 
   var solution = addRook(newBoard);
 
-  console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
+  console.log("Single solution for " + n + " rooks:", JSON.stringify(solution));
 
   return solution.rows();
 };
@@ -57,15 +57,12 @@ window.findNRooksSolution = function(n) {
 window.countNRooksSolutions = function(n) {
   var solutionCount = undefined; //fixme
 
-  console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
+  console.log("Number of solutions for " + n + " rooks:", solutionCount);
   return solutionCount;
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
-  var newBoard = new Board({ n: n });
-  var playedQueens = 0;
-
   var addQueen = function(currentBoard) {
     //---------base case --------//
     if (playedQueens === n) {
@@ -90,22 +87,42 @@ window.findNQueensSolution = function(n) {
         }
       }
     }
+    //-------failed case--------//
   };
 
-  var solution = addQueen(newBoard);
+  if (n === 0) {
+    var newBoard = new Board({ n: 0 });
+    return newBoard.rows();
+  }
 
-  console.log(
-    'Single solution for ' + n + ' queens:',
-    JSON.stringify(solution)
-  );
+  for (var row = 0; row < n; row++) {
+    for (var col = 0; col < n; col++) {
+      var newBoard = new Board({ n: n });
+      var playedQueens = 0;
 
-  return solution.rows();
+      newBoard.togglePiece([row], [col]);
+      playedQueens++;
+
+      let solution = addQueen(newBoard);
+
+      if (solution) {
+        console.log(
+          "Single solution for " + n + " queens:",
+          JSON.stringify(solution)
+        );
+        return solution.rows();
+      }
+    }
+  }
+
+  // fail case
+  return new Board({ n: n }).rows();
 };
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
   var solutionCount = undefined; //fixme
 
-  console.log('Number of solutions for ' + n + ' queens:', solutionCount);
+  console.log("Number of solutions for " + n + " queens:", solutionCount);
   return solutionCount;
 };
