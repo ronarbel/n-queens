@@ -87,14 +87,14 @@ window.findNQueensSolution = function(n) {
         }
       }
     }
-    //-------failed case--------//
   };
-
+  //-----if 0 case-----//
   if (n === 0) {
     var newBoard = new Board({ n: 0 });
     return newBoard.rows();
   }
 
+  //--------initialize------//
   for (var row = 0; row < n; row++) {
     for (var col = 0; col < n; col++) {
       var newBoard = new Board({ n: n });
@@ -115,7 +115,7 @@ window.findNQueensSolution = function(n) {
     }
   }
 
-  // fail case
+  //------fail case---------//
   return new Board({ n: n }).rows();
 };
 
