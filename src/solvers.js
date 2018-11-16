@@ -55,9 +55,34 @@ window.findNRooksSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  var solutionCount = undefined; //fixme
+  let newBoard = new Board({ n: n });
+  let solutionCount = 0;
 
-  console.log("Number of solutions for " + n + " rooks:", solutionCount);
+  let addRook = function(currentBoard, row) {
+  
+    //--------base case--------//
+    if (row === n) {
+      solutionCount++;
+      // console.log(currentBoard.rows());
+      return;
+    }
+
+    
+    //-------recursive case--------//
+    for (var col = 0; col < n; col++) {
+      currentBoard.togglePiece(row, col);
+      if (currentBoard.hasAnyRooksConflicts()) {
+        currentBoard.togglePiece(row, col);
+        continue;
+      } else {
+        addRook(currentBoard, ++row);
+        currentBoard.togglePiece(--row, col)
+      }
+    }
+  };
+
+  addRook(newBoard, 0);
+
   return solutionCount;
 };
 
@@ -115,93 +140,39 @@ window.findNQueensSolution = function(n) {
     }
   }
 
-  //------fail case---------//
+
   return new Board({ n: n }).rows();
 };
 
 // return the number of nxn chessboards that exist, with n queens placed such that none of them can attack each other
 window.countNQueensSolutions = function(n) {
-  var solutionCount = 0; //fixme
-  // var solutions = [];
+  let newBoard = new Board({ n: n });
+  let solutionCount = 0;
 
-  //---------base case---------//
-  var addQueen = function(currentBoard, loc) {
-    //loc = [row, col]
-    // let queenNum = 0;
-    // for (const arr of currentBoard.rows()) {
-    //   queenNum += arr.reduce((acc, item) => acc + item);
-    // }
-    // if (queenNum === n) {
-    //   // console.log(currentBoard.rows());
-    //   solutions.push(JSON.stringify(currentBoard.rows()));
-    //   // solutionCount++;
-    // }
-    if (playedQueens === n) {
+  let addQueen = function(currentBoard, row) {
+  
+    //--------base case--------//
+    if (row === n) {
       solutionCount++;
       console.log(currentBoard.rows());
-      console.log("playedQueens: " + playedQueens);
       return;
     }
 
-    //--------recursive case--------//
-    // let rowStart = true;
-    // let colStart = true;
-
-    // for (var row = startRow ? () => {startRow = false; return loc[0];}() : 0; row < n; row++) {
-    //   for (var col = startCol ? () => {startCol = false; return loc[1];}() : 0; col < n; col++) {
-    //     currentPlace = currentBoard.rows()[row][col];
-    let flag = false;
-    for (var row = 0; row < n; row++) {
-      for (var col = 0; col < n; col++) {
-        if (row === loc[0] && col === loc[1]) {
-          flag = true;
-        }
-        if (flag) {
-          currentPlace = currentBoard.rows()[row][col];
-
-          if (currentPlace === 0) {
-            currentBoard.togglePiece(row, col);
-            playedQueens++;
-            if (currentBoard.hasAnyQueensConflicts()) {
-              currentBoard.togglePiece(row, col);
-              playedQueens--;
-            } else {
-              addQueen(currentBoard, [row, col]);
-              currentBoard.togglePiece(row, col);
-              playedQueens--;
-            }
-          } else {
-            continue;
-          }
-        }
+    
+    //-------recursive case--------//
+    for (var col = 0; col < n; col++) {
+      currentBoard.togglePiece(row, col);
+      if (currentBoard.hasAnyQueensConflicts()) {
+        currentBoard.togglePiece(row, col);
+        continue;
+      } else {
+        addQueen(currentBoard, ++row);
+        currentBoard.togglePiece(--row, col)
       }
     }
   };
 
-  //-----if 0 case-----//
-  if (n === 0 || n === 1) {
-    return 1;
-  }
+  addQueen(newBoard, 0);
 
-  //--------initialize------//
-  for (var row = 0; row < n; row++) {
-    for (var col = 0; col < n; col++) {
-      var newBoard = new Board({ n: n });
-      var playedQueens = 0;
-
-      // newBoard.togglePiece(row, col);
-      // playedQueens++;
-      // ("");
-
-      addQueen(newBoard, [row, col]);
-    }
-  }
-
-  // let set = new Set(solutions);
-  // console.log("Number of solutions for " + n + " queens:", [...set].length);
-
-  // console.log(set);
-  // return [...set].length;
-  // return Math.sqrt(solutionCount);
   return solutionCount;
-};
+}
