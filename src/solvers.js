@@ -57,26 +57,33 @@ window.findNRooksSolution = function(n) {
 window.countNRooksSolutions = function(n) {
   let newBoard = new Board({ n: n });
   let solutionCount = 0;
+  let placedCol = {};
+  for (var i = 0; i < n; i++) {
+    placedCol[i] = false;
+  }
 
   let addRook = function(currentBoard, row) {
-  
     //--------base case--------//
     if (row === n) {
       solutionCount++;
-      // console.log(currentBoard.rows());
       return;
     }
 
-    
     //-------recursive case--------//
     for (var col = 0; col < n; col++) {
+      if (placedCol[col]) {
+        continue;
+      }
       currentBoard.togglePiece(row, col);
       if (currentBoard.hasAnyRooksConflicts()) {
         currentBoard.togglePiece(row, col);
         continue;
       } else {
+        placedCol[col] = true;
         addRook(currentBoard, ++row);
-        currentBoard.togglePiece(--row, col)
+
+        currentBoard.togglePiece(--row, col);
+        placedCol[col] = false;
       }
     }
   };
@@ -140,7 +147,6 @@ window.findNQueensSolution = function(n) {
     }
   }
 
-
   return new Board({ n: n }).rows();
 };
 
@@ -150,7 +156,6 @@ window.countNQueensSolutions = function(n) {
   let solutionCount = 0;
 
   let addQueen = function(currentBoard, row) {
-  
     //--------base case--------//
     if (row === n) {
       solutionCount++;
@@ -158,7 +163,6 @@ window.countNQueensSolutions = function(n) {
       return;
     }
 
-    
     //-------recursive case--------//
     for (var col = 0; col < n; col++) {
       currentBoard.togglePiece(row, col);
@@ -167,7 +171,7 @@ window.countNQueensSolutions = function(n) {
         continue;
       } else {
         addQueen(currentBoard, ++row);
-        currentBoard.togglePiece(--row, col)
+        currentBoard.togglePiece(--row, col);
       }
     }
   };
@@ -175,4 +179,4 @@ window.countNQueensSolutions = function(n) {
   addQueen(newBoard, 0);
 
   return solutionCount;
-}
+};
